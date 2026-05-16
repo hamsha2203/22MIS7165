@@ -1,0 +1,19 @@
+export const Log = async (stack, level, packageName, message) => {
+  // 1. Logs to your browser console for debugging
+  console.log(`[${level.toUpperCase()}] [${packageName}]: ${message}`);
+
+  // 2. Sends telemetry to the remote server
+  try {
+    const payload = { stack, level, package: packageName, message };
+    await fetch('/api/evaluation-service/logs', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${import.meta.env.VITE_LOG_TOKEN}`
+      },
+      body: JSON.stringify(payload)
+    });
+  } catch (err) {
+    // Fail silently so it doesn't break the UI
+  }
+};
